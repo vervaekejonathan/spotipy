@@ -595,6 +595,42 @@ class Spotify(object):
         '''
         return self._get('me/tracks', limit=limit, offset=offset)
 
+    def current_user_player_devices(self):
+        return self._get('me/player/devices')
+
+    def current_user_player(self):
+        return self._get('me/player')
+
+    def current_user_player_current_playing(self):
+        return self._get('me/player/currently-playing')
+
+    def current_user_player_update(self):
+        return self._put('me/player')
+
+    def current_user_player_play(self):
+        return self._put('me/player/play')
+
+    def current_user_player_pause(self):
+        return self._put('me/player/pause')
+
+    def current_user_player_next(self):
+        return self._post('me/player/next')
+
+    def current_user_player_previous(self):
+        return self._post('me/player/previous')
+
+    def current_user_player_seek(self, position_ms):
+        return self._put('me/player/seek', position_ms=position_ms)
+
+    def current_user_player_repeat(self, state):
+        return self._put('me/player/repeat', state=state)
+
+    def current_user_player_volume(self, volume_percent):
+        return self._put('me/player/volume', volume_percent=volume_percent)
+
+    def current_user_player_shuffle(self, state=1):
+        return self._put('me/player/shuffle', state=state)
+
     def current_user_followed_artists(self, limit=20, after=None):
         ''' Gets a list of the artists followed by the current authorized user
 
