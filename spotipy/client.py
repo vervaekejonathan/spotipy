@@ -595,42 +595,6 @@ class Spotify(object):
         '''
         return self._get('me/tracks', limit=limit, offset=offset)
 
-    def current_user_player_devices(self):
-        return self._get('me/player/devices')
-
-    def current_user_player(self):
-        return self._get('me/player')
-
-    def current_user_player_current_playing(self):
-        return self._get('me/player/currently-playing')
-
-    def current_user_player_update(self):
-        return self._put('me/player')
-
-    def current_user_player_play(self):
-        return self._put('me/player/play')
-
-    def current_user_player_pause(self):
-        return self._put('me/player/pause')
-
-    def current_user_player_next(self):
-        return self._post('me/player/next')
-
-    def current_user_player_previous(self):
-        return self._post('me/player/previous')
-
-    def current_user_player_seek(self, position_ms):
-        return self._put('me/player/seek', position_ms=position_ms)
-
-    def current_user_player_repeat(self, state):
-        return self._put('me/player/repeat', state=state)
-
-    def current_user_player_volume(self, volume_percent):
-        return self._put('me/player/volume', volume_percent=volume_percent)
-
-    def current_user_player_shuffle(self, state=1):
-        return self._put('me/player/shuffle', state=state)
-
     def current_user_followed_artists(self, limit=20, after=None):
         ''' Gets a list of the artists followed by the current authorized user
 
@@ -713,6 +677,129 @@ class Spotify(object):
         alist = [self._get_id('album', a) for a in albums]
         r = self._put('me/albums?ids=' + ','.join(alist))
         return r
+
+    def player_devices(self):
+        ''' Get a User’s Available Devices        
+        '''
+        return self._get('me/player/devices')
+
+    def player(self, market=None):
+        ''' Get Information About The User’s Current Playback
+            Parameters:
+                - market:  An ISO 3166-1 alpha-2 country code. 
+                  Provide this parameter if you want to apply Track Relinking.        
+        '''
+        return self._get('me/player', market=market)
+
+    def player_current_playing(self, market=None):
+        ''' Get the User’s Currently Playing Track 
+            Parameters:
+                - market:  An ISO 3166-1 alpha-2 country code. 
+                  Provide this parameter if you want to apply Track Relinking.
+        '''
+        return self._get('me/player/currently-playing', market=market)
+
+    def player_update(self, device_id, play=None):
+        ''' Transfer a User’s Playback 
+            Parameters:
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.                  
+                - play: true: ensure playback happens on new device.
+                        false or not provided: keep the current playback state.
+         '''
+        return self._put('me/player', device_ids="[\"" + device_id + "\"]}", play=play)
+
+    def player_play(self, device_id=None):
+        ''' Start/Resume a User’s Playback
+            Parameters:
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.
+         '''
+        return self._put('me/player/play', device_id=device_id)
+
+    def player_play_context_uri(self, context_uri=context_uri, offset=None, device_id=None):
+        ''' Start/Resume a User’s Playback
+            Parameters:
+                - context_uri: Spotify URI of the context to play.
+                  Valid contexts are albums, artists & playlist                  
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.
+         '''
+        return self._put('me/player/play', context_uri=context_uri, offset=offset, device_id=device_id)
+
+    def player_play_uris(self, uris=uris, offset=None, device_id=None):
+        ''' Start/Resume a User’s Playback
+            Parameters:
+                - context_uri: A JSON array of the Spotify track URIs to play.
+
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.
+         '''
+        return self._put('me/player/play', uris=uris, offset=offset, device_id=device_id)
+
+    def player_pause(self, device_id=None):
+        ''' Pause a User’s Playback
+            Parameters:
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.
+         '''
+        return self._put('me/player/pause', device_id=device_id)
+
+    def player_next(self, device_id=None):
+        ''' Skip User’s Playback To Next Track
+            Parameters:
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.
+         '''
+        return self._post('me/player/next', device_id=device_id)
+
+    def player_previous(self, device_id=None):
+        ''' Skip User’s Playback To Previous Track
+            Parameters:
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.
+         '''
+        return self._post('me/player/previous', device_id=device_id)
+
+    def player_seek(self, position_ms, device_id=None):
+        ''' Seek To Position In Currently Playing Track
+            Parameters:
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.
+        '''
+        return self._put('me/player/seek', position_ms=position_ms, device_id=device_id)
+
+    def player_repeat(self, state, device_id=None):
+        ''' Set Repeat Mode On User’s Playback
+            Parameters:
+                - state - track, context or off.
+                            track will repeat the current track.
+                            context will repeat the current context.
+                            off will turn repeat off.                             
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.                            
+        '''
+        return self._put('me/player/repeat', state=state, device_id=device_id)
+
+    def player_volume(self, volume_percent, device_id=None):
+        ''' Set Volume For User’s Playback
+            Parameters:
+                - volume_percent: The volume to set. 
+                  Must be a value from 0 to 100 inclusive.                  
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.                  
+        '''
+        return self._put('me/player/volume', volume_percent=volume_percent, device_id=device_id)
+
+    def player_shuffle(self, state, device_id=None):
+        ''' Toggle Shuffle For User’s Playback
+            Parameters:
+                - state: true: Shuffle user's playback
+                         false: Do not shuffle user's playback                         
+                - device_id: The id of the device this command is targeting. 
+                  If not supplied, the user's currently active device is the target.
+        '''
+        return self._put('me/player/shuffle', state=state, device_id=device_id)
 
     def featured_playlists(self, locale=None, country=None, timestamp=None,
                            limit=20, offset=0):
